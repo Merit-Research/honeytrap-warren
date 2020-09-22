@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'honeytrap_warren = honeytrap_warren.honeytrap_warren:main',
+            'honeytrap-warren = honeytrap_warren.honeytrap_warren:main',
             'warren = warren.warren:main',
         ]
     }

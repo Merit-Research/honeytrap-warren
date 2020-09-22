@@ -1,10 +1,10 @@
-import config
 import datetime
 import gzip
 import json
 import os
 
 from warren.warren import Warren
+import config
 
 gz = None
 archive_dir = config.get("options", "archive-dir")
