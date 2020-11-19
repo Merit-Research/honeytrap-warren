@@ -10,6 +10,21 @@ gz = None
 archive_dir = config.get("options", "archive-dir")
 
 
+def sanitize_dict(d):
+    ret = {}
+    for x in d:
+        if '.' not in x:
+            ret[x] = d[x]
+        else:
+            sp = x.split('.')
+            val = ret
+            for y in sp[:-1]:
+                val[y] = {} if y not in val else val[y]
+                val = val[y]
+            val[sp[-1]] = d[x]
+    return ret
+
+
 def open_file():
     global gz
     global archive_dir
@@ -59,6 +74,7 @@ def message_cb(data):
         if config.getboolean(data["queue"], "rewrite-dest"):
             jo["destination-ip"] = config.get(data["queue"], "rewrite-dest-ip")
 
+        jo = sanitize_dict(jo)
         gz.write(json.dumps(jo).encode() + b"\n")
 
     else:
