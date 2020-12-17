@@ -3,6 +3,7 @@ import gzip
 import json
 import os
 import time
+import datetime
 
 import sqlite3
 
@@ -84,8 +85,10 @@ def message_cb(data):
 
     else:
         print("heartbeat from " + data["queue"])
+        dt = datetime.datetime.strptime(data["date"][:19], "%Y-%m-%dT%H:%M:%S")
+        t = time.mktime(dt.timetuple())
         q = "INSERT OR REPLACE INTO heartbeats (queue, ts)"
-        q += "VALUES (" + data["queue"] + ", " + str(int(time.time())) + ")"
+        q += "VALUES (\"" + data["queue"] + "\", " + str(int(t)) + ")"
         cur = db_conn.cursor()
         cur.execute(q)
 
