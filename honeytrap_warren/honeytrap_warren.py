@@ -2,12 +2,16 @@ import datetime
 import gzip
 import json
 import os
+import time
+
+import sqlite3
 
 from warren.warren import Warren
-import config
+from . import config
 
 gz = None
 archive_dir = config.get("options", "archive-dir")
+db_conn = sqlite3.connect(config.get("options", "db-path"))
 
 
 def sanitize_dict(d):
@@ -65,6 +69,7 @@ def open_file():
 
 def message_cb(data):
     global gz
+    global db_conn
 
     open_file()
     jo = json.loads(data["message"])
@@ -79,6 +84,10 @@ def message_cb(data):
 
     else:
         print("heartbeat from " + data["queue"])
+        q = "INSERT OR REPLACE INTO heartbeats (queue, ts)"
+        q += "VALUES (" + data["queue"] + ", " + str(int(time.time())) + ")"
+        cur = db_conn.cursor()
+        cur.execute(q)
 
 
 def main():
